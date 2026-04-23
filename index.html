@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Cuestionario: Aceleradores de IA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e0f0ff 0%, #f0e6ff 50%, #ffe0f0 100%);
+            font-family: 'Segoe UI', 'Roboto', 'Poppins', system-ui, sans-serif;
+            padding: 1rem;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quiz-wrapper {
+            max-width: 780px;
+            width: 100%;
+            margin: 0 auto;
+            background: #ffffffdd;
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+            transition: all 0.2s;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1.2rem;
+            border-bottom: 4px solid #3a86ff;
+            padding-bottom: 0.7rem;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #1e6f9f, #e67e22);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.2px;
+        }
+
+        .sub {
+            color: #e67e22;
+            font-size: 0.85rem;
+            margin-top: 0.2rem;
+            font-weight: 600;
+        }
+
+        .progress-area {
+            background: #e6e0f0;
+            border-radius: 2rem;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #1a4a6e;
+            font-weight: 700;
+        }
+
+        .question-counter {
+            font-weight: 800;
+            background: #ffcc88;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            color: #5a3a1a;
+        }
+
+        .score-badge {
+            background: #88ccaa;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-weight: 700;
+            color: #1a4a2e;
+        }
+
+        .question-card {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            padding: 1.3rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            border-left: 8px solid #3a86ff;
+            border-right: 1px solid #d0e0f0;
+        }
+
+        .question-text {
+            font-size: 1.08rem;
+            font-weight: 800;
+            color: #2c3e66;
+            margin-bottom: 1.2rem;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            cursor: pointer;
+            padding: 0.6rem 0.8rem;
+            border-radius: 1rem;
+            background: #fefaf5;
+            border: 2px solid #e0d0c0;
+            transition: all 0.15s;
+        }
+
+        .option:hover {
+            background: #fff4e6;
+            border-color: #e6b87e;
+            transform: scale(1.01);
+        }
+
+        input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 1.2rem;
+            height: 1.2rem;
+            border: 2px solid #e67e22;
+            border-radius: 50%;
+            margin-top: 0.1rem;
+            cursor: pointer;
+            background: white;
+            flex-shrink: 0;
+        }
+
+        input[type="radio"]:checked {
+            background-color: #e67e22;
+            border-color: #e67e22;
+            box-shadow: inset 0 0 0 3px white;
+        }
+
+        .option label {
+            flex: 1;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            cursor: pointer;
+            color: #2c3e66;
+            font-weight: 600;
+        }
+
+        .feedback {
+            margin-top: 0.8rem;
+            padding: 0.7rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            background: #fef7e8;
+            border-left: 5px solid;
+            line-height: 1.4;
+            color: #2c3e50;
+        }
+
+        .feedback.correct {
+            border-left-color: #44aa66;
+            background: #e0ffe8;
+        }
+
+        .feedback.incorrect {
+            border-left-color: #ff6666;
+            background: #ffe6e6;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            border: none;
+            background: #ddd0c0;
+            color: #4a3a2a;
+            font-weight: 800;
+            padding: 0.6rem 1.3rem;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            background: #3a86ff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2a6ad0;
+            transform: scale(1.02);
+        }
+
+        .btn-secondary {
+            background: #e67e22;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #d46a10;
+        }
+
+        .btn-reset {
+            background: #cc6644;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #aa4422;
+        }
+
+        .btn-success {
+            background: #44aa66;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #338855;
+        }
+
+        .results-area {
+            margin-top: 1.5rem;
+            background: #fff2e0;
+            border-radius: 1.2rem;
+            padding: 1rem;
+            border: 2px solid #ffaa33;
+            display: none;
+        }
+
+        .results-area h3 {
+            color: #cc5500;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-summary {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: bold;
+            color: #1f4a2e;
+        }
+
+        .result-detail {
+            max-height: 260px;
+            overflow-y: auto;
+            font-size: 0.8rem;
+        }
+
+        .result-item {
+            padding: 0.4rem;
+            border-bottom: 1px solid #ffd9a0;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            margin-top: 1.2rem;
+            color: #aa8855;
+        }
+
+        @media (max-width: 550px) {
+            .quiz-wrapper {
+                padding: 1rem;
+            }
+            .question-text {
+                font-size: 0.98rem;
+            }
+            .option label {
+                font-size: 0.88rem;
+            }
+            .btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <div class="header">
+        <h1>🧠 Aceleradores de IA</h1>
+        <div class="sub">GPU, TPU, NPU, ASIC, entrenamiento, inferencia y eficiencia</div>
+    </div>
+
+    <div class="progress-area">
+        <span class="question-counter" id="questionCounter">Pregunta 1 / 20</span>
+        <span class="score-badge" id="liveScore">✅ Aciertos: 0</span>
+    </div>
+
+    <div id="questionContainer"></div>
+
+    <div class="nav-buttons">
+        <button id="prevBtn" class="btn btn-secondary">◀ Anterior</button>
+        <button id="nextBtn" class="btn btn-primary">Siguiente ▶</button>
+        <button id="resetBtn" class="btn btn-reset">⟳ Reiniciar</button>
+        <button id="finalScoreBtn" class="btn btn-success">📊 Ver total</button>
+    </div>
+
+    <div id="resultsPanel" class="results-area"></div>
+    <footer>📌 Selecciona una opción → retroalimentación inmediata. Al finalizar, revisa tu puntuación.</footer>
+</div>
+
+<script>
+    // ==================== DATOS DEL CUESTIONARIO (20 preguntas) ====================
+    const questionsData = [
+        { text: "Un ingeniero debe desplegar un modelo de lenguaje de gran escala (LLM) para un cliente que exige privacidad absoluta de los datos y ejecución sin conexión a internet en dispositivos móviles. ¿Qué componente de hardware es el cuello de botella crítico para esta implementación?",
+          options: ["El ancho de banda de la GPU en el centro de datos.", "La capacidad de procesamiento tensorial de una TPU Cloud.", "La eficiencia y latencia de la NPU integrada en el SoC del dispositivo.", "El número de núcleos CUDA disponibles en estaciones de trabajo locales."],
+          correct: "c",
+          explanation: "Correcta (c): Las NPU permiten ejecución local (Edge Computing) garantizando privacidad y baja latencia, operando con milivatios."
+        },
+        { text: "Si una empresa decide migrar su flujo de trabajo de entrenamiento de arquitecturas NVIDIA a una solución de silicio personalizada (In-House Silicon), ¿cuál es el obstáculo técnico más profundo que enfrentará según el concepto de 'Foso Competitivo'?",
+          options: ["La falta de potencia bruta en los nuevos chips.", "El coste de re-ingeniería debido a la dependencia del ecosistema CUDA.", "La imposibilidad de usar memorias HBM3 en chips propios.", "La ausencia de conectividad 5G en los aceleradores personalizados."],
+          correct: "b",
+          explanation: "Correcta (b): Cambiar de plataforma implica re-ingeniería enorme porque CUDA es el estándar industrial con librerías optimizadas (cuDNN, cuBLAS)."
+        },
+        { text: "En el diseño de una TPU, se sacrifica la generalidad para implementar 'matrices sistólicas'. ¿Qué ventaja técnica directa ofrece este diseño frente a una arquitectura de CPU tradicional?",
+          options: ["Mayor capacidad para manejar múltiples sistemas operativos simultáneamente.", "Optimización radical para la multiplicación de matrices y tensores.", "Reducción del uso de memoria HBM para procesos de inferencia.", "Versatilidad para renderizado 3D y simulaciones científicas complejas."],
+          correct: "b",
+          explanation: "Correcta (b): Las TPU están optimizadas exclusivamente para redes neuronales mediante matrices sistólicas, maximizando rendimiento por vatio."
+        },
+        { text: "Durante la 'Fase 2: Optimización' del ciclo de vida de la IA, se realizan procesos de cuantización y pruning. ¿Cuál es el objetivo técnico de estas operaciones en relación con el hardware de destino?",
+          options: ["Aumentar el número de parámetros del modelo para mejorar la precisión.", "Adaptar el modelo para que pueda ser absorbido masivamente por una GPU H100.", "Destilar el modelo para hacerlo más ligero y compatible con la inferencia en NPU.", "Incrementar el consumo energético para acelerar el tiempo de entrenamiento."],
+          correct: "c",
+          explanation: "Correcta (c): La optimización reduce el modelo para que sea eficiente en dispositivos finales (movilidad/privacidad) o servidores a escala."
+        },
+        { text: "Se requiere una solución para un laboratorio de investigación independiente que necesita realizar tanto entrenamiento de modelos experimentales como inferencia de prueba. ¿Qué hardware de la jerarquía de NVIDIA ofrece el mejor equilibrio técnico?",
+          options: ["NVIDIA H100 (SXM5) por su ancho de banda.", "NVIDIA L40S, diseñado para balancear entrenamiento e inferencia.", "RTX 4090, centrada exclusivamente en investigación local.", "NVIDIA A100, por ser el estándar de la generación previa."],
+          correct: "b",
+          explanation: "Correcta (b): La L40S es definida como el 'equilibrio', un chip versátil para balancear ambas tareas."
+        },
+        { text: "¿Por qué el consumo energético de los centros de datos (300-700W por GPU) se considera un factor determinante para la evolución hacia la computación fotónica?",
+          options: ["Porque la electricidad es más cara que la luz en términos de infraestructura.", "Para evitar los cuellos de botella térmicos usando luz en lugar de electricidad.", "Porque las NPU no pueden escalar a niveles de centros de datos.", "Para permitir que los smartphones funcionen como servidores de entrenamiento."],
+          correct: "b",
+          explanation: "Correcta (b): La computación fotónica se presenta como alternativa para evitar problemas térmicos y mejorar la eficiencia ante consumo insostenible."
+        },
+        { text: "Un arquitecto de sistemas compara una GPU y una NPU para una aplicación de reconocimiento facial en tiempo real en cámaras de seguridad. ¿Cuál es la principal razón para elegir la NPU?",
+          options: ["Su capacidad para realizar GPGPU (computación de propósito general).", "Su madurez en el ecosistema de software como PyTorch.", "Su baja latencia y eficiencia extrema en tareas de inferencia en el borde.", "La posibilidad de entrenar el modelo directamente en la cámara."],
+          correct: "c",
+          explanation: "Correcta (c): Las NPU están diseñadas para ejecutar redes neuronales con eficiencia extrema en aplicaciones embebidas sin agotar recursos."
+        },
+        { text: "En la comparativa de 'Flexibilidad', la TPU se sitúa en un nivel 'Media'. ¿Qué limita técnicamente a la TPU frente a una GPU?",
+          options: ["Solo puede ser fabricada por NVIDIA.", "Está restringida casi exclusivamente al ámbito del Deep Learning.", "No admite el uso de frameworks como TensorFlow.", "Tiene un consumo energético mayor que una GPU de centros de datos."],
+          correct: "b",
+          explanation: "Correcta (b): La GPU es versátil (entrenamiento, 3D, simulaciones); la TPU sacrifica generalidad para ser un 'bisturí' en redes neuronales."
+        },
+        { text: "Al analizar las especificaciones de una H100, se observa un ancho de banda de 3.35 TB/s. ¿Cuál es la función técnica primordial de este ancho de banda en el entrenamiento masivo?",
+          options: ["Permitir la conexión inalámbrica más rápida entre servidores.", "Facilitar la absorción masiva de datos y el ajuste de pesos en modelos frontera.", "Reducir la necesidad de núcleos CUDA en la arquitectura Hopper.", "Optimizar la batería de los dispositivos móviles que consumen el modelo."],
+          correct: "b",
+          explanation: "Correcta (b): El entrenamiento masivo requiere fuerza bruta de hardware para procesar datos y ajustar pesos en semanas o meses."
+        },
+        { text: "¿Cuál es la diferencia fundamental entre un ASIC y un procesador de propósito general (CPU) según la analogía del material?",
+          options: ["El ASIC es una 'navaja suiza' que maneja múltiples tareas operativas.", "La CPU es un chip diseñado desde cero para una tarea concreta.", "El ASIC es una especialización extrema para una única función, minimizando latencia y consumo.", "La CPU es más eficiente energéticamente que un ASIC en tareas de IA."],
+          correct: "c",
+          explanation: "Correcta (c): CPU es navaja suiza (versátil); ASIC es bisturí (especializado para máxima eficiencia en una tarea)."
+        },
+        { text: "Un desarrollador nota que su modelo de IA funciona perfectamente en la nube (TPU) pero es demasiado lento en un smartphone. ¿Qué paso del ciclo de vida de la IA probablemente omitió?",
+          options: ["La fase de entrenamiento masivo en granjas de servidores.", "La Fase 2 de Optimización (cuantización y pruning).", "La compra de una licencia de CUDA para el dispositivo móvil.", "La migración del modelo de PyTorch a C++."],
+          correct: "b",
+          explanation: "Correcta (b): Antes del despliegue (inferencia) es necesaria la optimización para destilar el modelo y hacerlo ligero para el hardware final."
+        },
+        { text: "En el contexto de 'In-House Silicon', ¿qué motiva a empresas como Amazon (Trainium) o Google (TPU) a desarrollar sus propios chips?",
+          options: ["La falta de potencia de las CPUs comerciales.", "La necesidad de reducir la dependencia de NVIDIA y mejorar la eficiencia por vatio.", "El deseo de vender hardware físico directamente a los consumidores.", "La incompatibilidad de las GPUs con el almacenamiento en la nube."],
+          correct: "b",
+          explanation: "Correcta (b): Las Big Tech desarrollan silicio propio para ganar independencia de proveedores externos y optimizar su infraestructura."
+        },
+        { text: "Si se evalúa la métrica TOPS/W, ¿cuál de los siguientes escenarios representa la mayor eficiencia técnica?",
+          options: ["Una GPU consumiendo 700W para inferencia general.", "Una NPU operando en milivatios para inferencia local.", "Una CPU manejando tareas de IA junto con el sistema operativo.", "Una TPU en la nube entrenando el modelo Gemini."],
+          correct: "b",
+          explanation: "Correcta (b): La NPU destaca por su bajísimo consumo (milivatios), maximizando operaciones por vatio (TOPS/W) en el borde."
+        },
+        { text: "¿Qué característica técnica de la arquitectura Hopper (H100) la sitúa como el estándar actual para centros de datos?",
+          options: ["Su capacidad de funcionar sin refrigeración activa.", "La integración de 80 GB de memoria HBM3 y alto ancho de banda.", "Su bajo coste de adquisición para investigadores independientes.", "Que puede ser instalada directamente en un smartphone."],
+          correct: "b",
+          explanation: "Correcta (b): La H100 es referencia actual por sus especificaciones de memoria HBM3 y capacidad operativa masiva."
+        },
+        { text: "¿Qué diferencia conceptual existe entre la computación neuromórfica y la computación tradicional de IA?",
+          options: ["La neuromórfica usa luz en lugar de electrones.", "La neuromórfica imita la arquitectura física del cerebro biológico.", "La neuromórfica se basa exclusivamente en núcleos CUDA.", "La neuromórfica solo es aplicable a la renderización 3D."],
+          correct: "b",
+          explanation: "Correcta (b): La computación neuromórfica busca imitar la estructura biológica del cerebro para mejorar la eficiencia."
+        },
+        { text: "En la Matriz de Diagnóstico, ¿qué acelerador se recomienda para 'Inferencia en el dispositivo'?",
+          options: ["GPU.", "TPU.", "NPU.", "CPU."],
+          correct: "c",
+          explanation: "Correcta (c): La matriz asigna inferencia en dispositivo a la NPU por su bajo consumo y entorno físico (Smartphones/IoT)."
+        },
+        { text: "¿Por qué se afirma que la GPU es el 'estándar versátil' a pesar de la existencia de chips más especializados como la TPU?",
+          options: ["Porque es más barata de producir.", "Por su capacidad de ejecutar miles de operaciones simultáneas y su ecosistema maduro (CUDA/librerías).", "Porque consume menos energía que una NPU.", "Porque es la única que puede entrenar modelos como Gemini."],
+          correct: "b",
+          explanation: "Correcta (b): Su versatilidad y el respaldo de años de optimización de software la mantienen como base del entrenamiento masivo."
+        },
+        { text: "Un sistema de IA embebido en un dron debe detectar objetos en tiempo real con una batería muy limitada. ¿Cuál es el diagnóstico de hardware adecuado?",
+          options: ["Conexión vía 5G a una granja de GPUs.", "Uso de una NPU local para minimizar latencia de red y consumo.", "Instalación de una RTX 4090 con un generador externo.", "Dependencia total de la CPU del dron para todas las tareas."],
+          correct: "b",
+          explanation: "Correcta (b): La NPU habilita funciones sin latencia de red y protege la batería, ideal para aplicaciones móviles y tiempo real."
+        },
+        { text: "¿Cuál es el papel de librerías como cuDNN y NCCL en el dominio de mercado de NVIDIA?",
+          options: ["Son lenguajes de programación que reemplazan a Python.", "Son capas superiores de software altamente optimizadas que facilitan el uso del hardware.", "Son componentes físicos que se añaden al chip después de su fabricación.", "Son protocolos de seguridad para evitar el hackeo de modelos de IA."],
+          correct: "b",
+          explanation: "Correcta (b): Estas librerías forman parte del ecosistema de software que crea la barrera de salida para competidores."
+        },
+        { text: "Si el futuro del hardware prioriza las operaciones por vatio apoyadas en memorias HBM de nueva generación, ¿cuál es la tendencia principal que se está atacando?",
+          options: ["La falta de personal capacitado en IA.", "La insostenibilidad del consumo energético en los centros de datos.", "La necesidad de pantallas de mayor resolución en smartphones.", "El exceso de oferta de chips NVIDIA en el mercado."],
+          correct: "b",
+          explanation: "Correcta (b): El material identifica el consumo energético como insostenible, convirtiendo a TOPS/W en la 'métrica suprema' del futuro."
+        }
+    ];
+
+    let userAnswers = new Array(20).fill(null);
+    let currentIndex = 0;
+
+    const questionContainer = document.getElementById('questionContainer');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const finalScoreBtn = document.getElementById('finalScoreBtn');
+    const questionCounterSpan = document.getElementById('questionCounter');
+    const liveScoreSpan = document.getElementById('liveScore');
+    const resultsPanel = document.getElementById('resultsPanel');
+
+    function updateLiveScore() {
+        let correctCount = 0;
+        for (let i = 0; i < userAnswers.length; i++) {
+            if (userAnswers[i] && userAnswers[i] === questionsData[i].correct) correctCount++;
+        }
+        liveScoreSpan.textContent = `✅ Aciertos: ${correctCount} / 20`;
+        return correctCount;
+    }
+
+    function saveAnswer(selectedLetter) {
+        userAnswers[currentIndex] = selectedLetter;
+        updateLiveScore();
+        renderCurrentQuestion();
+    }
+
+    function renderCurrentQuestion() {
+        const q = questionsData[currentIndex];
+        const selected = userAnswers[currentIndex];
+        const letters = ['a', 'b', 'c', 'd'];
+        let optionsHtml = '';
+        q.options.forEach((opt, idx) => {
+            const letter = letters[idx];
+            const isChecked = (selected === letter);
+            optionsHtml += `
+                <div class="option" data-letter="${letter}">
+                    <input type="radio" name="question" value="${letter}" id="opt_${letter}" ${isChecked ? 'checked' : ''}>
+                    <label for="opt_${letter}"><strong>${letter.toUpperCase()})</strong> ${opt}</label>
+                </div>
+            `;
+        });
+
+        let feedbackHtml = '';
+        if (selected) {
+            const isCorrect = (selected === q.correct);
+            const correctLetter = q.correct;
+            const correctText = q.options[letters.indexOf(correctLetter)];
+            const explanation = q.explanation;
+            if (isCorrect) {
+                feedbackHtml = `<div class="feedback correct">✅ <strong>¡Correcto!</strong> ${explanation}</div>`;
+            } else {
+                feedbackHtml = `<div class="feedback incorrect">❌ <strong>Incorrecto.</strong> La respuesta correcta es ${correctLetter.toUpperCase()}) ${correctText}.<br>${explanation}</div>`;
+            }
+        } else {
+            feedbackHtml = `<div class="feedback" style="border-left-color:#ffcc88; background:#fff5e6;">⚡ Selecciona una opción para ver la retroalimentación.</div>`;
+        }
+
+        const html = `
+            <div class="question-card">
+                <div class="question-text">${q.text}</div>
+                <div class="options" id="optionsContainer">
+                    ${optionsHtml}
+                </div>
+                ${feedbackHtml}
+            </div>
+        `;
+        questionContainer.innerHTML = html;
+
+        // Event listeners
+        const optionDivs = document.querySelectorAll('.option');
+        optionDivs.forEach(div => {
+            const radio = div.querySelector('input[type="radio"]');
+            const letter = div.getAttribute('data-letter');
+            if (radio) {
+                radio.addEventListener('change', () => {
+                    if (radio.checked) saveAnswer(letter);
+                });
+            }
+            div.addEventListener('click', (e) => {
+                if (e.target.tagName !== 'INPUT') {
+                    const radioInside = div.querySelector('input');
+                    if (radioInside && !radioInside.checked) {
+                        radioInside.checked = true;
+                        saveAnswer(letter);
+                    }
+                }
+            });
+        });
+
+        questionCounterSpan.textContent = `Pregunta ${currentIndex+1} / 20`;
+    }
+
+    function showFinalResults() {
+        let correctCount = 0;
+        let detailsHtml = '';
+        for (let i = 0; i < questionsData.length; i++) {
+            const q = questionsData[i];
+            const userAns = userAnswers[i];
+            const isCorrect = (userAns === q.correct);
+            if (isCorrect) correctCount++;
+            const statusIcon = isCorrect ? '✅' : '❌';
+            const userShow = userAns ? userAns.toUpperCase() : '—';
+            const correctShow = q.correct.toUpperCase();
+            detailsHtml += `
+                <div class="result-item">
+                    <span style="min-width: 30px;">${statusIcon}</span>
+                    <span><strong>Pregunta ${i+1}</strong> (Tu respuesta: ${userShow} / Correcta: ${correctShow})</span>
+                </div>
+            `;
+        }
+        const percent = Math.round((correctCount / 20) * 100);
+        resultsPanel.innerHTML = `
+            <h3>📊 Resultado final</h3>
+            <div class="result-summary">🎯 Aciertos: ${correctCount} de 20 (${percent}%)</div>
+            <div class="result-detail">${detailsHtml}</div>
+            <button id="closeResultsBtn" class="btn btn-secondary" style="margin-top: 10px; width:100%;">✖ Cerrar resumen</button>
+        `;
+        resultsPanel.style.display = 'block';
+        document.getElementById('closeResultsBtn')?.addEventListener('click', () => {
+            resultsPanel.style.display = 'none';
+        });
+        alert(`📊 Cuestionario completado.\nAciertos: ${correctCount} de 20 (${percent}%)\nRevisa el resumen detallado en pantalla.`);
+    }
+
+    function nextQuestion() {
+        if (currentIndex < 19) {
+            currentIndex++;
+            renderCurrentQuestion();
+        } else {
+            const unanswered = userAnswers.filter(a => a === null).length;
+            if (unanswered > 0) {
+                if (confirm(`Aún tienes ${unanswered} pregunta(s) sin responder. ¿Deseas finalizar de todas formas? Las no respondidas se contarán como incorrectas.`)) {
+                    showFinalResults();
+                }
+            } else {
+                showFinalResults();
+            }
+        }
+    }
+
+    function prevQuestion() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            renderCurrentQuestion();
+        } else {
+            alert("Ya estás en la primera pregunta.");
+        }
+    }
+
+    function resetQuiz() {
+        if (confirm("¿Reiniciar todo el cuestionario? Se perderán todas las respuestas.")) {
+            userAnswers = new Array(20).fill(null);
+            currentIndex = 0;
+            resultsPanel.style.display = 'none';
+            updateLiveScore();
+            renderCurrentQuestion();
+        }
+    }
+
+    prevBtn.addEventListener('click', prevQuestion);
+    nextBtn.addEventListener('click', nextQuestion);
+    resetBtn.addEventListener('click', resetQuiz);
+    finalScoreBtn.addEventListener('click', showFinalResults);
+
+    renderCurrentQuestion();
+    updateLiveScore();
+</script>
+</body>
+</html>
